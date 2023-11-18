@@ -15,3 +15,13 @@ export function profileRequest() {
     method: 'get'
   })
 }
+
+// 修改密码
+export function updatePassRequest(data) {
+  return request({
+    url: '/sys/user/updatePass',
+    method: 'put',
+    data
+  })
+}
+

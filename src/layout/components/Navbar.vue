@@ -30,19 +30,19 @@
         </el-dropdown-menu>
       </el-dropdown>
     </div>
-    <el-dialog title="修改密码" :visible.sync="dialogFormVisible" width="35%">
-      <el-form :model="form" :rules="rules">
+    <el-dialog title="修改密码" :visible.sync="dialogFormVisible" width="35%" @close="dialogCancel">
+      <el-form ref="formRef" :model="form" :rules="rules">
         <el-form-item label="原密码" prop="oldPassword" :label-width="formLabelWidth">
           <el-input v-model="form.oldPassword" autocomplete="off" />
         </el-form-item>
         <el-form-item label="新密码" prop="newPassword" :label-width="formLabelWidth">
           <el-input v-model="form.newPassword" />
         </el-form-item>
-        <el-form-item label="重复密码" prop="rePassword" :label-width="formLabelWidth">
+        <el-form-item label="重复密码" class="my-star" prop="rePassword" :label-width="formLabelWidth">
           <el-input v-model="form.rePassword" autocomplete="off" />
         </el-form-item>
         <el-form-item :label-width="formLabelWidth">
-          <el-button type="primary" @click="dialogFormVisible = false">确认修改</el-button>
+          <el-button type="primary" @click="submit">确认修改</el-button>
           <el-button @click="dialogFormVisible = false">取 消</el-button>
         </el-form-item>
       </el-form>
@@ -54,6 +54,7 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+import { updatePassRequest } from '@/api/user'
 
 export default {
   components: {
@@ -86,14 +87,14 @@ export default {
       rules: {
         oldPassword: [
           { required: true, message: '请输入原密码', trigger: 'blur' },
-          { min: 6, max: 15, message: '长度在 6 到 5 个字符', trigger: 'blur' }
+          { pattern: /^\S{6,15}$/, message: '长度在 6 到 5 个字符', trigger: 'blur' }
         ],
         newPassword: [
           { required: true, message: '请输入原密码', trigger: 'blur' },
           { pattern: /^\S{6,15}$/, message: '长度在 6 到 5 个字符', trigger: 'blur' }
         ],
         rePassword: [
-          { required: true, validator, trigger: 'blur' }
+          { validator, trigger: 'blur' }
         ]
 
       },
@@ -119,10 +120,32 @@ export default {
     },
     updatePassword() {
       this.dialogFormVisible = !this.dialogFormVisible
+    },
+    submit() {
+      this.$refs.formRef.validate(async(value) => {
+        if (value) {
+          console.log(value)
+          await updatePassRequest({ oldPassword: this.form.oldPassword, newPassword: this.form.newPassword })
+        }
+      })
+    },
+    dialogCancel() {
+      this.$refs.formRef.resetFields()
+      this.dialogFormVisible = false
     }
   }
 }
 </script>
+
+<style>
+/* 这个style就是专门来针对 element-ui的样式 二次修改的 */
+/* 因为放在下面带有scoped结构里面，有样式穿透的问题， 有些情况通过 ::v-deep 也不能生效 */
+.my-star .el-form-item__label::before {
+  content: '*';
+  color: #F56C6C;
+  margin-right: 4px;
+}
+</style>
 
 <style lang="scss" scoped>
 .navbar {
