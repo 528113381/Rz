@@ -1,6 +1,8 @@
 import axios from 'axios'
 import { getToken } from './auth'
 import { Message } from 'element-ui'
+import store from '@/store'
+import router from '@/router'
 const service = axios.create({
   // 将api文件夹中的地址进行拼接
   // baseURL: '/api',
@@ -36,6 +38,15 @@ service.interceptors.response.use(
     }
   },
   error => {
+    if (error.response.status === 401) {
+      store.commit('user/delTokenMutation')
+      router.push('/login')
+      Message({
+        message: error.response.data.message || '请求失败',
+        type: 'error'
+      })
+      return Promise.reject(error)
+    }
     Message({
       message: error.response.data.message || '请求失败',
       type: 'error'

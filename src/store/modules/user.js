@@ -13,6 +13,11 @@ export default {
     },
     setUserInfoMutation(state, payload) {
       state.userInfo = payload
+    },
+    delTokenMutation(state) {
+      state.token = ''
+      state.userInfo = {}
+      setToken('')
     }
   },
   actions: {
