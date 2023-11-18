@@ -30,6 +30,23 @@
         </el-dropdown-menu>
       </el-dropdown>
     </div>
+    <el-dialog title="修改密码" :visible.sync="dialogFormVisible" width="35%">
+      <el-form :model="form" :rules="rules">
+        <el-form-item label="原密码" prop="oldPassword" :label-width="formLabelWidth">
+          <el-input v-model="form.oldPassword" autocomplete="off" />
+        </el-form-item>
+        <el-form-item label="新密码" prop="newPassword" :label-width="formLabelWidth">
+          <el-input v-model="form.newPassword" />
+        </el-form-item>
+        <el-form-item label="重复密码" prop="rePassword" :label-width="formLabelWidth">
+          <el-input v-model="form.rePassword" autocomplete="off" />
+        </el-form-item>
+        <el-form-item :label-width="formLabelWidth">
+          <el-button type="primary" @click="dialogFormVisible = false">确认修改</el-button>
+          <el-button @click="dialogFormVisible = false">取 消</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -42,6 +59,46 @@ export default {
   components: {
     Breadcrumb,
     Hamburger
+  },
+  data() {
+    const validator = (rule, value, callback) => {
+      if (value !== this.form.newPassword) {
+        callback(new Error('两次输入的密码不一样,请重新输入'))
+        return
+      }
+      if (!/^\S{3,15}$/.test(value)) {
+        callback(new Error('新密码格式错误3-15位'))
+        return
+      }
+      if (value !== this.form.newPassword) {
+        callback(new Error('两次密码不一样，请重新输入'))
+        return
+      }
+      callback()
+    }
+    return {
+      dialogFormVisible: false,
+      form: {
+        oldPassword: '',
+        newPassword: '',
+        rePassword: ''
+      },
+      rules: {
+        oldPassword: [
+          { required: true, message: '请输入原密码', trigger: 'blur' },
+          { min: 6, max: 15, message: '长度在 6 到 5 个字符', trigger: 'blur' }
+        ],
+        newPassword: [
+          { required: true, message: '请输入原密码', trigger: 'blur' },
+          { pattern: /^\S{6,15}$/, message: '长度在 6 到 5 个字符', trigger: 'blur' }
+        ],
+        rePassword: [
+          { required: true, validator, trigger: 'blur' }
+        ]
+
+      },
+      formLabelWidth: '90px'
+    }
   },
   computed: {
     ...mapGetters([
@@ -61,7 +118,7 @@ export default {
       this.$router.push('/login')
     },
     updatePassword() {
-
+      this.dialogFormVisible = !this.dialogFormVisible
     }
   }
 }
