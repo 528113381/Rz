@@ -23,9 +23,10 @@ router.beforeEach(async(to, from, next) => {
     if (to.path === '/login') {
       next('/')
     } else {
-      const res = await profileRequest()
-      store.commit('user/setUserInfoMutation', res.data)
-      console.log(res)
+      if (!store.getters.userId) {
+        const res = await profileRequest()
+        store.commit('user/setUserInfoMutation', res.data)
+      }
       next()
     }
     return

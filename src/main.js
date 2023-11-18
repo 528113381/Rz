@@ -44,5 +44,3 @@ new Vue({
   render: h => h(App)
 })
 
-console.log(process.env)
-console.log(process.env.VUE_APP_CESHi_NAME)

@@ -7,7 +7,9 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
+          <span>{{ $store.getters.username }}</span>
+          <img v-if="staffPhoto" :src="$store.getters.staffPhoto" class="user-avatar">
+          <span v-else class="user-text">{{ username?.charAt(0) }}</span>
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
@@ -44,7 +46,10 @@ export default {
   computed: {
     ...mapGetters([
       'sidebar',
-      'avatar'
+      'avatar',
+      'username',
+      'staffPhoto'
+
     ])
   },
   methods: {
@@ -115,7 +120,8 @@ export default {
       margin-right: 30px;
 
       .avatar-wrapper {
-        margin-top: 5px;
+        display: flex;
+        align-items: center;
         position: relative;
 
         .user-avatar {
@@ -123,6 +129,18 @@ export default {
           width: 40px;
           height: 40px;
           border-radius: 10px;
+          margin: 0 5px 0 10px;
+        }
+        .user-text{
+          width: 30px;
+          height: 30px;
+          text-align: center;
+          line-height: 30px;
+          background-color: #04c9be;
+          border-radius: 50%;
+          margin-left: 8px;
+          color: #fff;
+          font-size: 16px;
         }
 
         .el-icon-caret-bottom {
@@ -131,6 +149,7 @@ export default {
           right: -20px;
           top: 25px;
           font-size: 12px;
+          transform: translateY(-50%);
         }
       }
     }
