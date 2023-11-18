@@ -5,6 +5,14 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
+import approval from './modules/approval'
+import attendance from './modules/attendance '
+import department from './modules/department'
+import employee from './modules/employee'
+import permission from './modules/permission'
+import role from './modules/role'
+import salary from './modules/salary'
+import social from './modules/social'
 
 export const constantRoutes = [
   {
@@ -23,13 +31,24 @@ export const constantRoutes = [
     path: '/',
     component: Layout,
     redirect: '/dashboard',
-    children: [{
-      path: 'dashboard',
-      name: 'Dashboard',
-      component: () => import('@/views/dashboard/index'),
-      meta: { title: '首页', icon: 'dashboard' }
-    }]
+    children: [
+      {
+        path: 'dashboard',
+        name: 'Dashboard',
+        component: () => import('@/views/dashboard/index'),
+        meta: { title: '首页', icon: 'dashboard' }
+      }
+    ]
   },
+
+  approval,
+  attendance,
+  department,
+  employee,
+  permission,
+  role,
+  salary,
+  social,
 
   { path: '*', redirect: '/404', hidden: true }
 ]
