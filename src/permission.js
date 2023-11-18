@@ -3,6 +3,7 @@ import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 import getPageTitle from '@/utils/get-page-title'
 import { getToken } from './utils/auth'
+import { profileRequest } from './api/user'
 
 const whiteList = ['/login']
 
@@ -21,6 +22,8 @@ router.beforeEach(async(to, from, next) => {
     if (to.path === '/login') {
       next('/')
     } else {
+      const res = await profileRequest()
+      console.log(res)
       next()
     }
     return

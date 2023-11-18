@@ -13,7 +13,7 @@ service.interceptors.request.use(
   config => {
     const token = getToken()
     if (token) {
-      config.headers.Authorization = `Brarer ${token}`
+      config.headers.Authorization = `Bearer ${token}`
     }
     return config
   },
