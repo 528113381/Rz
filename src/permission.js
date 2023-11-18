@@ -4,6 +4,7 @@ import 'nprogress/nprogress.css' // progress bar style
 import getPageTitle from '@/utils/get-page-title'
 import { getToken } from './utils/auth'
 import { profileRequest } from './api/user'
+import store from './store'
 
 const whiteList = ['/login']
 
@@ -23,6 +24,7 @@ router.beforeEach(async(to, from, next) => {
       next('/')
     } else {
       const res = await profileRequest()
+      store.commit('user/setUserInfoMutation', res.data)
       console.log(res)
       next()
     }
