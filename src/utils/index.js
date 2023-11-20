@@ -117,10 +117,10 @@ export function param2Obj(url) {
 }
 
 // 转树形结构
-export function transformListTree(arr, pid) {
+export function transformListTree(arr, id) {
   const list = []
   arr.forEach((item) => {
-    if (item.pid === pid) {
+    if (item.pid === id) {
       item.children = transformListTree(arr, item.id)
       // 如果循环的每一个元素的 pid 和传进来的 id相等，就找到了父元素，进入到新数组
       list.push(item)
