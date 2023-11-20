@@ -4,6 +4,7 @@
       :data="departmentList"
       :props="defaultProps"
       default-expand-all
+      :expand-on-click-node="false"
     >
       <div slot-scope="{ data: LabelData }" class="item-warp">
         <div class="left">{{ LabelData.name }}</div>
