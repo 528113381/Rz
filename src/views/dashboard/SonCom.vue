@@ -6,7 +6,7 @@
 </template>
 <script>
 export default {
-  props: ['title'],
+//   props: ['title'],
   data() {
     return {
       count: 100,

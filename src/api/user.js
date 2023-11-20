@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-
+// 验证登录
 export function loginRequest(data) {
   return request({
     url: '/sys/login',

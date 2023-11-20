@@ -1,33 +1,56 @@
 <template>
-  <div>
-    <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick" />
+  <div class="department-wrap">
+    <el-tree
+      :data="departmentList"
+      :props="defaultProps"
+    >
+      <div slot-scope="{ data: LabelData }" class="item-warp">
+        <div class="left">{{ LabelData.name }}</div>
+        <div class="right">右边</div>
+      </div>
+    </el-tree>
   </div>
 </template>
 <script>
+import { departmentRequest } from '@/api/department'
+import { transformListTree } from '@/utils'
 export default {
   data() {
     return {
-      data: [
-        {
-          label: '一级 1',
-          children: [{
-            label: '二级 1-1',
-            children: [{
-              label: '三级 1-1-1'
-            }]
-          }]
-        }
-      ],
+      departmentList: [],
       defaultProps: {
         children: 'children',
-        label: 'label'
+        label: 'name'
       }
     }
   },
+  created() {
+    this.department()
+  },
   methods: {
-    handleNodeClick(data) {
-      console.log(data)
+    async department() {
+      const res = await departmentRequest()
+      // console.log(res)
+      this.departmentList = transformListTree(res.data, 0)
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.department-wrap{
+  padding: 15px;
+  .item-warp{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    .left{
+      flex: 1;
+      // background-color: aqua;
+    }
+    .right{
+    // background-color: yellowgreen;
+    }
+  }
+}
+</style>
