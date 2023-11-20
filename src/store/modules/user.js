@@ -27,6 +27,5 @@ export default {
       context.commit('loginMutation', data)
       return Promise.resolve(true)
     }
-
   }
 }
