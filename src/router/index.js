@@ -3,7 +3,6 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 
-/* Layout */
 import Layout from '@/layout'
 import approval from './modules/approval'
 import attendance from './modules/attendance '
@@ -41,12 +40,12 @@ export const constantRoutes = [
     ]
   },
 
-  approval,
-  attendance,
   department,
+  role,
   employee,
   permission,
-  role,
+  attendance,
+  approval,
   salary,
   social,
 
