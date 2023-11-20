@@ -10,32 +10,37 @@
         <div class="left">{{ LabelData.name }}</div>
         <div class="right">
           <div class="rigth-handler">{{ LabelData.managerName }}</div>
-          <el-dropdown>
+          <el-dropdown @command="handleCommand">
             <div>
               操作<i class="el-icon-arrow-down el-icon--right" />
             </div>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>添加子部门</el-dropdown-item>
-              <el-dropdown-item>编辑部门</el-dropdown-item>
-              <el-dropdown-item>删除</el-dropdown-item>
+              <el-dropdown-item command="add">添加子部门</el-dropdown-item>
+              <el-dropdown-item command="edit">编辑部门</el-dropdown-item>
+              <el-dropdown-item command="del">删除</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>
       </div>
     </el-tree>
+    <!-- 弹出框 -->
+    <addDialogVue :visible.sync="dialogVisible" />
   </div>
 </template>
 <script>
 import { departmentRequest } from '@/api/department'
 import { transformListTree } from '@/utils'
+import addDialogVue from './components/addDialog.vue'
 export default {
+  components: { addDialogVue },
   data() {
     return {
       departmentList: [],
       defaultProps: {
         children: 'children',
         label: 'name'
-      }
+      },
+      dialogVisible: false
     }
   },
   created() {
@@ -46,7 +51,13 @@ export default {
       const res = await departmentRequest()
       // console.log(res)
       this.departmentList = transformListTree(res.data, 0)
+    },
+    handleCommand(value) {
+      if (value === 'add') {
+        this.dialogVisible = true
+      }
     }
+
   }
 }
 </script>
