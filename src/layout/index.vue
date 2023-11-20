@@ -55,7 +55,6 @@ export default {
   @import "~@/styles/variables.scss";
 
   .app-wrapper {
-    background-color: #f0f2f5;
     @include clearfix;
     position: relative;
     height: 100%;
@@ -73,6 +72,10 @@ export default {
     height: 100%;
     position: absolute;
     z-index: 999;
+
+  }
+  .main-container{
+    background-color: #f0f2f5;
   }
 
   .fixed-header {
