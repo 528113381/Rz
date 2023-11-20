@@ -18,6 +18,7 @@ export default {
 
     if (icon) {
       if (icon.includes('el-icon')) {
+        // 虚拟节点,虚拟dom
         vnodes.push(<i class={[icon, 'sub-el-icon']} />)
       } else {
         vnodes.push(<svg-icon icon-class={icon}/>)

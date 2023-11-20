@@ -1,11 +1,11 @@
 import Layout from '@/layout'
 
 export default {
-  path: '/',
+  path: '/department',
   component: Layout,
   children: [
     {
-      path: 'department',
+      path: '',
       name: 'Department',
       component: () => import('@/views/department/index'),
       meta: { title: '组织', icon: 'dashboard' }
