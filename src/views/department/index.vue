@@ -10,7 +10,7 @@
         <div class="left">{{ LabelData.name }}</div>
         <div class="right">
           <div class="rigth-handler">{{ LabelData.managerName }}</div>
-          <el-dropdown @command="handleCommand">
+          <el-dropdown @command="handleCommand($event,LabelData.id)">
             <div>
               操作<i class="el-icon-arrow-down el-icon--right" />
             </div>
@@ -24,7 +24,14 @@
       </div>
     </el-tree>
     <!-- 弹出框 -->
-    <addDialogVue :visible.sync="dialogVisible" :list="list" />
+    <addDialogVue
+      :visible.sync="dialogVisible"
+      :list="list"
+      :current-id="currentId"
+      :is-edit="isEdit"
+      @ADD_SUCCESS="department"
+      @RESET_PROPS="resetProps"
+    />
   </div>
 </template>
 <script>
@@ -36,13 +43,15 @@ export default {
   components: { addDialogVue },
   data() {
     return {
+      currentId: '',
       departmentList: [],
       defaultProps: {
         children: 'children',
         label: 'name'
       },
       dialogVisible: false,
-      list: []
+      list: [],
+      isEdit: false
     }
   },
   created() {
@@ -56,10 +65,20 @@ export default {
       const tmp = _.cloneDeep(res.data)
       this.departmentList = transformListTree(tmp, 0)
     },
-    handleCommand(value) {
+    handleCommand(value, id) {
       if (value === 'add') {
         this.dialogVisible = true
+        this.isEdit = false
+      } else if (value === 'edit') {
+        this.dialogVisible = true
+        this.isEdit = true
+      } else {
+        //
       }
+      this.currentId = id
+    },
+    resetProps() {
+      this.currentId = ''
     }
 
   }

@@ -1,6 +1,11 @@
 <template>
   <div class="add-dialog">
-    <el-dialog title="提示" :visible="visible" @close="close">
+    <el-dialog
+      :title="isEdit ? '编辑部门' : '新增部门'"
+      :visible="visible"
+      width="50%"
+      @close="resetForm"
+    >
       <el-form
         ref="ruleForm"
         :model="ruleForm"
@@ -30,15 +35,15 @@
           <el-button
             type="primary"
             @click="submitForm('ruleForm')"
-          >立即创建</el-button>
-          <el-button @click="resetForm('ruleForm')">重置</el-button>
+          >{{ isEdit?'更新':'创建' }}</el-button>
+          <el-button @click="resetForm('ruleForm')">取消</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
   </div>
 </template>
 <script>
-import { simpleListRequest } from '@/api/department'
+import { addDepartmentRequest, getDepartmentDetailRequest, simpleListRequest } from '@/api/department'
 export default {
   props: {
     visible: {
@@ -47,6 +52,14 @@ export default {
     },
     list: {
       type: Array,
+      required: true
+    },
+    currentId: {
+      type: [Number, String],
+      required: true
+    },
+    isEdit: {
+      type: Boolean,
       required: true
     }
   },
@@ -96,8 +109,16 @@ export default {
     }
   },
   watch: {
-    list(newVal, oldVal) {
+    list(newVal, oldVal) {},
 
+    async currentId(newVal) {
+      if (this.isEdit && newVal) {
+        const { data } = await getDepartmentDetailRequest(newVal)
+        this.ruleForm.name = data.name
+        this.ruleForm.code = data.code
+        this.ruleForm.introduce = data.introduce
+        this.ruleForm.managerId = data.managerId
+      }
     }
   },
   created() {
@@ -106,20 +127,25 @@ export default {
   methods: {
     close() {
       this.$emit('update:visible', false)
+      this.$emit('RESET_PROPS')
     },
     async simpleList() {
       const res = await simpleListRequest()
       this.managerList = res.data
     },
     submitForm() {
-      this.$refs.ruleForm.validate(value => {
+      this.$refs.ruleForm.validate(async value => {
         if (value) {
           console.log(this.ruleForm)
+          await addDepartmentRequest({ ...this.ruleForm, pid: this.currentId })
+          this.resetForm()
+          this.$emit('ADD_SUCCESS')
         }
       })
     },
     resetForm() {
       this.$refs.ruleForm.resetFields()
+      this.close()
     }
   }
 }

@@ -13,3 +13,18 @@ export function simpleListRequest() {
     url: '/sys/user/simple'
   })
 }
+
+// 新增部门
+export function addDepartmentRequest(data) {
+  return request({
+    url: '/company/department',
+    method: 'post',
+    data
+  })
+}
+// 获取单个部门的详情
+export function getDepartmentDetailRequest(id) {
+  return request({
+    url: `/company/department/${id}`
+  })
+}
