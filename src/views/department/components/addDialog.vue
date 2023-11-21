@@ -65,14 +65,24 @@ export default {
   },
   data() {
     const ValidatorName = (rules, value, callback) => {
-      if (this.list.some((item) => item.name === value)) {
+      let tmpArr = this.list
+      if (this.isEdit) {
+        tmpArr = this.list.filter(item => item.id !== this.currentId)
+      }
+
+      if (tmpArr.some((item) => item.name === value)) {
         callback(new Error('当前部门名称已存在,请重新输入'))
         return
       }
       callback()
     }
     const ValidatorCode = (rules, value, callback) => {
-      if (this.list.some((item) => item.code === value)) {
+      let tmpArr = this.list
+      if (this.isEdit) {
+        tmpArr = this.list.filter(item => item.id !== this.currentId)
+      }
+
+      if (tmpArr.some((item) => item.code === value)) {
         callback(new Error('当前部门编码已存在,请重新输入'))
         return
       }
@@ -136,7 +146,6 @@ export default {
     submitForm() {
       this.$refs.ruleForm.validate(async value => {
         if (value) {
-          console.log(this.ruleForm)
           await addDepartmentRequest({ ...this.ruleForm, pid: this.currentId })
           this.resetForm()
           this.$emit('ADD_SUCCESS')
