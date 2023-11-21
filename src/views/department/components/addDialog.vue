@@ -18,6 +18,7 @@
           <el-select
             v-model="ruleForm.managerId"
             placeholder="请选择部门负责人"
+            clearable
           >
             <el-option label="区域一" value="shanghai" />
             <el-option label="区域二" value="beijing" />
@@ -43,9 +44,20 @@ export default {
     visible: {
       type: Boolean,
       required: true
+    },
+    list: {
+      type: Array,
+      required: true
     }
   },
   data() {
+    const ValidatorName = (rules, value, callback) => {
+      if (this.list.some((item) => item.name === value)) {
+        callback(new Error('当前部门名称已存在,请重新输入'))
+        return
+      }
+      callback()
+    }
     return {
       ruleForm: {
         name: '',
@@ -56,7 +68,8 @@ export default {
       rules: {
         name: [
           { required: true, message: '请填写部门名称', trigger: 'blur' },
-          { min: 1, max: 50, message: '部门名称必须是1-50字符', trigger: 'blur' }
+          { min: 1, max: 50, message: '部门名称必须是1-50字符', trigger: 'blur' },
+          { validator: ValidatorName, trigger: 'blur' }
         ],
         code: [
           { required: true, message: '请填写部门编号', trigger: 'blur' },
@@ -70,6 +83,11 @@ export default {
           { min: 1, max: 300, message: '部门编号必须是1-300字符', trigger: 'blur' }
         ]
       }
+    }
+  },
+  watch: {
+    list(newVal, oldVal) {
+
     }
   },
   methods: {

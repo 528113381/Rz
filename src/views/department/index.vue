@@ -24,13 +24,14 @@
       </div>
     </el-tree>
     <!-- 弹出框 -->
-    <addDialogVue :visible.sync="dialogVisible" />
+    <addDialogVue :visible.sync="dialogVisible" :list="list" />
   </div>
 </template>
 <script>
 import { departmentRequest } from '@/api/department'
 import { transformListTree } from '@/utils'
 import addDialogVue from './components/addDialog.vue'
+import _ from 'lodash'
 export default {
   components: { addDialogVue },
   data() {
@@ -40,7 +41,8 @@ export default {
         children: 'children',
         label: 'name'
       },
-      dialogVisible: false
+      dialogVisible: false,
+      list: []
     }
   },
   created() {
@@ -50,7 +52,9 @@ export default {
     async department() {
       const res = await departmentRequest()
       // console.log(res)
-      this.departmentList = transformListTree(res.data, 0)
+      this.list = res.data
+      const tmp = _.cloneDeep(res.data)
+      this.departmentList = transformListTree(tmp, 0)
     },
     handleCommand(value) {
       if (value === 'add') {
