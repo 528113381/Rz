@@ -20,8 +20,7 @@
             placeholder="请选择部门负责人"
             clearable
           >
-            <el-option label="区域一" value="shanghai" />
-            <el-option label="区域二" value="beijing" />
+            <el-option v-for="item in managerList" :key="item.id" :label="item.username" :value="item.id" />
           </el-select>
         </el-form-item>
         <el-form-item label="部门介绍" prop="introduce">
@@ -39,6 +38,7 @@
   </div>
 </template>
 <script>
+import { simpleListRequest } from '@/api/department'
 export default {
   props: {
     visible: {
@@ -58,13 +58,22 @@ export default {
       }
       callback()
     }
+    const ValidatorCode = (rules, value, callback) => {
+      if (this.list.some((item) => item.code === value)) {
+        callback(new Error('当前部门编码已存在,请重新输入'))
+        return
+      }
+      callback()
+    }
     return {
+      managerList: [],
       ruleForm: {
         name: '',
         code: '',
         managerId: '',
         introduce: ''
       },
+
       rules: {
         name: [
           { required: true, message: '请填写部门名称', trigger: 'blur' },
@@ -73,7 +82,8 @@ export default {
         ],
         code: [
           { required: true, message: '请填写部门编号', trigger: 'blur' },
-          { min: 1, max: 50, message: '部门编号必须是1-50字符', trigger: 'blur' }
+          { min: 1, max: 50, message: '部门编号必须是1-50字符', trigger: 'blur' },
+          { validator: ValidatorCode, trigger: 'blur' }
         ],
         managerId: [
           { required: true, message: '请选择部门负责人', trigger: 'change' }
@@ -90,9 +100,26 @@ export default {
 
     }
   },
+  created() {
+    this.simpleList()
+  },
   methods: {
     close() {
       this.$emit('update:visible', false)
+    },
+    async simpleList() {
+      const res = await simpleListRequest()
+      this.managerList = res.data
+    },
+    submitForm() {
+      this.$refs.ruleForm.validate(value => {
+        if (value) {
+          console.log(this.ruleForm)
+        }
+      })
+    },
+    resetForm() {
+      this.$refs.ruleForm.resetFields()
     }
   }
 }

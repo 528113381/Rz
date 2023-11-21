@@ -7,3 +7,9 @@ export function departmentRequest() {
   })
 }
 
+// 获取部门负责人列表
+export function simpleListRequest() {
+  return request({
+    url: '/sys/user/simple'
+  })
+}
