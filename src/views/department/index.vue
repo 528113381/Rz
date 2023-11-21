@@ -35,7 +35,7 @@
   </div>
 </template>
 <script>
-import { departmentRequest } from '@/api/department'
+import { deleteDepartmentRequest, departmentRequest } from '@/api/department'
 import { transformListTree } from '@/utils'
 import addDialogVue from './components/addDialog.vue'
 import _ from 'lodash'
@@ -73,7 +73,19 @@ export default {
         this.dialogVisible = true
         this.isEdit = true
       } else {
-        //
+        this.$confirm('是否删除部门?', '提示', {
+          cancelButtonText: '取消',
+          confirmButtonText: '确定',
+          type: 'warning'
+        }).then(async() => {
+          await deleteDepartmentRequest(id)
+          this.department()
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+        }).catch(() => {
+        })
       }
       this.currentId = id
     },

@@ -28,3 +28,20 @@ export function getDepartmentDetailRequest(id) {
     url: `/company/department/${id}`
   })
 }
+
+// 更新部门接口
+export function updateDepartmentRequest(data) {
+  return request({
+    url: `/company/department/${data.id}`,
+    method: 'PUT',
+    data
+  })
+}
+
+// 更删除部门接口
+export function deleteDepartmentRequest(id) {
+  return request({
+    url: `/company/department/${id}`,
+    method: 'DELETE'
+  })
+}

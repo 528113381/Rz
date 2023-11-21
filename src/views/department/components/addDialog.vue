@@ -43,7 +43,7 @@
   </div>
 </template>
 <script>
-import { addDepartmentRequest, getDepartmentDetailRequest, simpleListRequest } from '@/api/department'
+import { addDepartmentRequest, getDepartmentDetailRequest, simpleListRequest, updateDepartmentRequest } from '@/api/department'
 export default {
   props: {
     visible: {
@@ -124,10 +124,12 @@ export default {
     async currentId(newVal) {
       if (this.isEdit && newVal) {
         const { data } = await getDepartmentDetailRequest(newVal)
-        this.ruleForm.name = data.name
-        this.ruleForm.code = data.code
-        this.ruleForm.introduce = data.introduce
-        this.ruleForm.managerId = data.managerId
+        this.ruleForm = data
+        delete this.ruleForm.managerName
+        // this.ruleForm.name = data.name
+        // this.ruleForm.code = data.code
+        // this.ruleForm.introduce = data.introduce
+        // this.ruleForm.managerId = data.managerId
       }
     }
   },
@@ -136,6 +138,9 @@ export default {
   },
   methods: {
     close() {
+      // this.$options 当前组件初始配置对象
+      this.ruleForm = this.$options.data().ruleForm
+
       this.$emit('update:visible', false)
       this.$emit('RESET_PROPS')
     },
@@ -146,7 +151,12 @@ export default {
     submitForm() {
       this.$refs.ruleForm.validate(async value => {
         if (value) {
-          await addDepartmentRequest({ ...this.ruleForm, pid: this.currentId })
+          if (this.isEdit) {
+            await updateDepartmentRequest(this.ruleForm)
+          } else {
+            await addDepartmentRequest({ ...this.ruleForm, pid: this.currentId })
+          }
+
           this.resetForm()
           this.$emit('ADD_SUCCESS')
         }
