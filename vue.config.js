@@ -41,7 +41,7 @@ module.exports = {
     proxy: {
       // 所有请求以/api开头的自动代理到设置地址
       '/api': {
-        target: 'https://heimahr.itheima.net'
+        target: 'https://heimahr-t.itheima.net'
       }
     }
     // before: require('./mock/mock-server.js')

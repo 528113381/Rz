@@ -7,3 +7,21 @@ export function getRoleListRequest(params) {
     params
   })
 }
+
+// 添加角色的请求
+export function addRoleRequest(data) {
+  return request({
+    url: '/sys/role',
+    method: 'post',
+    data
+  })
+}
+
+// 编辑角色的请求
+export function updateRoleRequest(data) {
+  return request({
+    url: `/sys/role/${data.id}`,
+    method: 'put',
+    data
+  })
+}
