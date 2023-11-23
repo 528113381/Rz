@@ -99,7 +99,7 @@ export default {
 
 <style lang="scss" scoped>
 .department-wrap{
-  padding: 15px;
+  // padding: 15px;
    .el-tree{
     padding: 30px 140px;
   }
