@@ -62,7 +62,7 @@ export default {
       tableData: [],
       total: 0,
       page: 1,
-      pagesize: 3
+      pagesize: 5
     }
   },
   created() {
@@ -70,12 +70,18 @@ export default {
   },
   methods: {
     async getRoleList() {
-      const res = await getRoleListRequest({ page: 1, pagesize: 10 })
+      const res = await getRoleListRequest({ page: this.page, pagesize: this.pagesize })
       this.tableData = res.data.rows
       this.total = res.data.total
     },
-    handleSizeChange() {},
-    handleCurrentChange() {}
+    handleSizeChange(value) {
+      this.pagesize = value
+      this.getRoleList()
+    },
+    handleCurrentChange(value) {
+      this.page = value
+      this.getRoleList()
+    }
   }
 
 }
