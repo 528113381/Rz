@@ -25,3 +25,10 @@ export function updateRoleRequest(data) {
     data
   })
 }
+// 删除角色的请求
+export function deleteRoleRequest(id) {
+  return request({
+    url: `/sys/role/${id}`,
+    method: 'DELETE'
+  })
+}
