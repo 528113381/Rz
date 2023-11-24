@@ -3,9 +3,10 @@
     <div class="left">
       <div style="margin-bottom : 10px">
         <el-input
-          v-model="input2"
+          :value="query.keyword"
           placeholder="请输入内容"
           prefix-icon="el-icon-search"
+          @input="keywordChange"
         />
       </div>
       <el-tree
@@ -16,6 +17,7 @@
         highlight-current
         :expand-on-click-node="false"
         node-key="id"
+        @node-click="nodeClick"
       />
 
     </div>
@@ -97,8 +99,13 @@
         </el-table-column>
       </el-table>
       <el-pagination
-        layout="prev, pager, next"
+        :current-page="query.page"
+        :page-sizes="[10, 20, 30, 40]"
+        :page-size="query.pagesize"
+        layout="total, sizes, prev, pager, next, jumper"
         :total="total"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
       />
     </div>
   </div>
@@ -107,11 +114,11 @@
 import { departmentRequest } from '@/api/department'
 import { transformListTree } from '@/utils'
 import { getUserListRequest } from '@/api/employee'
+import lodash from 'lodash'
 export default {
   name: 'Employee',
   data() {
     return {
-      input2: '',
       departmentList: [],
       defaultProps: {
         children: 'children',
@@ -129,6 +136,12 @@ export default {
 
     }
   },
+  watch: {
+    'query.keyword': lodash.debounce(function(newVal) {
+      this.query.page = 1
+      this.getUserList()
+    }, 300)
+  },
   created() {
     this.department()
   },
@@ -144,10 +157,28 @@ export default {
     },
     async getUserList() {
       const res = await getUserListRequest(this.query)
-      console.log(res)
       this.employeeList = res.data.rows
       this.total = res.data.total
+    },
+    handleCurrentChange(value) {
+      this.query.page = value
+      this.getUserList()
+    },
+    handleSizeChange(value) {
+      this.query.pagesize = value
+      this.getUserList()
+    },
+    nodeClick(item, node, com) {
+      this.query.departmentId = item.id
+      this.query.page = 1
+      this.query.pagesize = 10
+      this.getUserList()
+    },
+    keywordChange(e) {
+      this.query.keyword = e
+      console.log(e)
     }
+
   }
 
 }
