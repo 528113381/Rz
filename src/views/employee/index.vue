@@ -29,7 +29,7 @@
         <div class="btn-right">
           <el-button type="primary " size="small">添加员工</el-button>
           <el-button size="small"> excel导入</el-button>
-          <el-button size="small"> excel导出</el-button>
+          <el-button size="small" @click="exportExcel"> excel导出</el-button>
         </div>
       </div>
       <el-table
@@ -113,7 +113,8 @@
 <script>
 import { departmentRequest } from '@/api/department'
 import { transformListTree } from '@/utils'
-import { getUserListRequest } from '@/api/employee'
+import { exportExcelRequest, getUserListRequest } from '@/api/employee'
+import FaveSaver from 'file-saver'
 import lodash from 'lodash'
 export default {
   name: 'Employee',
@@ -177,6 +178,10 @@ export default {
     keywordChange(e) {
       this.query.keyword = e
       console.log(e)
+    },
+    async exportExcel() {
+      const res = await exportExcelRequest()
+      FaveSaver.saveAs(res, '员工信息.xlsx')
     }
 
   }

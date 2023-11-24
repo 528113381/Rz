@@ -27,6 +27,7 @@ service.interceptors.request.use(
 // response interceptor
 service.interceptors.response.use(
   response => {
+    if (response.data instanceof Blob) return response.data
     if (response.data.success) {
       return response.data
     } else {
