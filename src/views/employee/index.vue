@@ -27,8 +27,8 @@
           <el-button size="small"> 群发通知</el-button>
         </div>
         <div class="btn-right">
-          <el-button type="primary " size="small">添加员工</el-button>
-          <el-button size="small"> excel导入</el-button>
+          <el-button type="primary " size="small" @click="addEmployee">添加员工</el-button>
+          <el-button size="small" @click="importExcelBtn"> excel导入</el-button>
           <el-button size="small" @click="exportExcel"> excel导出</el-button>
         </div>
       </div>
@@ -95,7 +95,11 @@
           fixed="right"
           align="center"
         >
-          <template />
+          <template slot-scope="{ row }">
+            <el-button type="text" @click="viewDetail(row.id)">查看</el-button>
+            <el-button type="text">角色</el-button>
+            <el-button type="text" @click="deleteEmployee(row.id)">删除</el-button>
+          </template>
         </el-table-column>
       </el-table>
       <el-pagination
@@ -108,16 +112,26 @@
         @current-change="handleCurrentChange"
       />
     </div>
+    <ImprotExcel v-model="visible" @IMPOPT_SUCCESS="getUserList" />
   </div>
 </template>
+
+528113381-1310876796
+ap-nanjing
+AKIDEH4cqsd5IEuJRIsBDySfcIiqhOoxpRmq
+oMddLmwqTpvmOjna6LIzPHvKSJtwoQnu
 <script>
 import { departmentRequest } from '@/api/department'
 import { transformListTree } from '@/utils'
-import { exportExcelRequest, getUserListRequest } from '@/api/employee'
+import { exportExcelRequest, getUserListRequest, deleteEmployeeRequest } from '@/api/employee'
 import FaveSaver from 'file-saver'
 import lodash from 'lodash'
+import ImprotExcel from './components/import-excel.vue'
 export default {
   name: 'Employee',
+  components: {
+    ImprotExcel
+  },
   data() {
     return {
       departmentList: [],
@@ -133,15 +147,19 @@ export default {
         departmentId: 1
       },
       employeeList: [],
-      total: 0
+      total: 0,
+      visible: false
 
     }
   },
   watch: {
-    'query.keyword': lodash.debounce(function(newVal) {
-      this.query.page = 1
-      this.getUserList()
-    }, 300)
+    // 'query.keyword': this.keywordChange
+    // 'query.keyword': lodash.debounce(function(newVal) {
+    //   console.log(newVal)
+    //   this.query.keyword = newVal
+    //   this.query.page = 1
+    //   this.getUserList()
+    // }, 300)
   },
   created() {
     this.department()
@@ -176,12 +194,39 @@ export default {
       this.getUserList()
     },
     keywordChange(e) {
-      this.query.keyword = e
       console.log(e)
+      this.query.keyword = e
+      this.query.page = 1
+      lodash.debounce(() => {
+        console.log(this.query.keyword)
+        this.getUserList()
+      }, 800)
     },
     async exportExcel() {
       const res = await exportExcelRequest()
       FaveSaver.saveAs(res, '员工信息.xlsx')
+    },
+    importExcelBtn() {
+      this.visible = true
+    },
+    async deleteEmployee(id) {
+      await deleteEmployeeRequest(id)
+      this.$message({
+        message: '删除成功',
+        type: 'success'
+      })
+      if (this.query.page > 1 && this.employeeList.length === 1) {
+        this.query.page--
+      }
+
+      this.getUserList()
+    },
+    viewDetail(id) {
+      // 跳转到详情页面
+      this.$router.push(`/employee/detail/${id}`)
+    },
+    addEmployee() {
+      this.$router.push(`/employee/detail`)
     }
 
   }

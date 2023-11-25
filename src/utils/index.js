@@ -121,7 +121,10 @@ export function transformListTree(arr, id) {
   const list = []
   arr.forEach((item) => {
     if (item.pid === id) {
-      item.children = transformListTree(arr, item.id)
+      const tmp = transformListTree(arr, item.id)
+      if (tmp.length > 0) {
+        item.children = tmp
+      }
       // 如果循环的每一个元素的 pid 和传进来的 id相等，就找到了父元素，进入到新数组
       list.push(item)
     }
