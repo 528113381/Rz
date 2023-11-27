@@ -43,8 +43,24 @@ export function deleteEmployeeRequest(id) {
 // 新增员工
 export function addEmployeeRequest(data) {
   return request({
-    url: `/sys/user`,
-    method: 'post',
+    url: '/sys/user',
+    method: 'POST',
+    data
+  })
+}
+
+// 获取员工详情
+export function getEmployeeDetailRequest(id) {
+  return request({
+    url: `/sys/user/${id}`
+  })
+}
+
+// 修改员工详情
+export function updateEmployeeDetailRequest(data) {
+  return request({
+    url: `/sys/user/${data.id}`,
+    method: 'PUT',
     data
   })
 }

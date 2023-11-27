@@ -13,7 +13,7 @@
       <el-form-item label="工号" prop="workNumber">
         <el-input v-model="ruleForm.workNumber" disabled />
       </el-form-item>
-      <el-form-item label="手机" prop="mobile">
+      <el-form-item label="手机" prop="mobile" :disabled="$route.params.id ? true : false">
         <el-input v-model="ruleForm.mobile" />
       </el-form-item>
       <el-form-item label="部门" prop="departmentId">
@@ -24,8 +24,8 @@
           v-model="ruleForm.formOfEmployment"
           placeholder="请选择活动区域"
         >
-          <el-option label="正式" value="1" />
-          <el-option label="非正式" value="2" />
+          <el-option label="正式" :value="1" />
+          <el-option label="非正式" :value="2" />
         </el-select>
       </el-form-item>
       <el-form-item label="入职时间" prop="timeOfEntry">
@@ -49,13 +49,7 @@
         />
       </el-form-item>
       <el-form-item label="员工头像" prop="staffPhoto">
-        <el-upload
-          class="avatar-uploader"
-          action="https://jsonplaceholder.typicode.com/posts/"
-          :show-file-list="false"
-        >
-          <i class="el-icon-plus avatar-uploader-icon" />
-        </el-upload>
+        <UploadImage :value="ruleForm.staffPhoto" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitForm">{{
@@ -66,10 +60,11 @@
   </div>
 </template>
 <script>
-import { addEmployeeRequest } from '@/api/employee'
+import { addEmployeeRequest, getEmployeeDetailRequest, updateEmployeeDetailRequest } from '@/api/employee'
 import SelectDepartment from './components/select-department.vue'
+import UploadImage from './components/upload-image.vue'
 export default {
-  components: { SelectDepartment },
+  components: { SelectDepartment, UploadImage },
   data() {
     const validator = (rules, value, callback) => {
       if (value === 0) {
@@ -126,15 +121,37 @@ export default {
       }
     }
   },
-  create() {
-    console.log(this.$route.params)
+  created() {
+    this.init()
   },
 
   methods: {
+    async init() {
+      // this.$route.params 有值就是编辑或者查看，没有值就是新增
+      if (this.$route.params.id) {
+        // 编辑 --- 发请求，将数据回填
+        const res = await getEmployeeDetailRequest(this.$route.params.id)
+        this.ruleForm = res.data
+      } else {
+        // 新增
+      }
+    },
     submitForm() {
       this.$refs.ruleFormRef.validate(async(value) => {
         if (value) {
-          await addEmployeeRequest(this.ruleForm)
+          if (this.$route.params.id) {
+            // 因为编辑的时候，获取用户详情，给this.ruleForm这个对象赋值了很多数据
+            // 但是更新的接口有些字段不需要，需要手动删除一些字段
+            delete this.ruleForm.departmentName
+            delete this.ruleForm.roleIds
+            await updateEmployeeDetailRequest(this.ruleForm)
+          } else {
+            // 进入了这个分支，标签校验成功，然后在发请求
+            await addEmployeeRequest(this.ruleForm)
+          }
+
+          // this.$router.push('xxxx')
+          // this.$router.go(-1)
           this.$router.back()
         }
       })
@@ -149,17 +166,17 @@ export default {
     width: 100%;
   }
 
-  .avatar-uploader .el-upload {
+  ::v-deep .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
     border-radius: 6px;
     cursor: pointer;
     position: relative;
     overflow: hidden;
   }
-  .avatar-uploader .el-upload:hover {
+  ::v-deep .avatar-uploader .el-upload:hover {
     border-color: #409eff;
   }
-  .avatar-uploader-icon {
+  ::v-deep .avatar-uploader-icon {
     font-size: 28px;
     color: #8c939d;
     width: 178px;
@@ -167,11 +184,20 @@ export default {
     line-height: 178px;
     text-align: center;
   }
+  ::v-deep .el-upload--text{
+    width: 178px;
+    height: 178px;
+    img{
+    width: 178px;
+    height: 178px;
+    }
+  }
   .avatar {
     width: 178px;
     height: 178px;
     display: block;
   }
 }
+
 </style>
 

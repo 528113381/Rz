@@ -22,7 +22,6 @@ export default {
   },
   actions: {
     async loginAction(context, payload) {
-      console.log(payload, 222)
       const { data } = await loginRequest(payload)
       context.commit('loginMutation', data)
       return Promise.resolve(true)

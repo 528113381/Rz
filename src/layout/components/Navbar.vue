@@ -124,7 +124,6 @@ export default {
     submit() {
       this.$refs.formRef.validate(async(value) => {
         if (value) {
-          console.log(value)
           await updatePassRequest({ oldPassword: this.form.oldPassword, newPassword: this.form.newPassword })
         }
       })

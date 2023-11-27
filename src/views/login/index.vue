@@ -63,10 +63,8 @@ export default {
     submitForm() {
       this.$refs.formRef.validate(async(value) => {
         if (value) {
-          console.log('发送请求')
           // 请求写在vuex的actions里
           const res = await this.$store.dispatch('user/loginAction', { mobile: this.ruleForm.mobile, password: this.ruleForm.password })
-          console.log(1111)
           if (res) {
             this.$router.push('/')
           }

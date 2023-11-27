@@ -190,11 +190,9 @@ export default {
       this.getUserList()
     },
     keywordChange(e) {
-      console.log(e)
       this.query.keyword = e
       this.query.page = 1
       lodash.debounce(() => {
-        console.log(this.query.keyword)
         this.getUserList()
       }, 800)
     },

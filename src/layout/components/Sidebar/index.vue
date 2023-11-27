@@ -51,9 +51,6 @@ export default {
     isCollapse() {
       return !this.sidebar.opened
     }
-  },
-  created() {
-    console.log('路由一共有几个', this.routes)
   }
 }
 </script>

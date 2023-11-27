@@ -42,7 +42,6 @@ export default {
     },
     async exportExcelTemplate() {
       const res = await exportExcelTemplateRequest()
-      console.log(res)
       saveAs(res, '员工导入模板.xlsx')
     },
     importFile() {
