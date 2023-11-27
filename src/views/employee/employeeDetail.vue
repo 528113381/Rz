@@ -49,7 +49,7 @@
         />
       </el-form-item>
       <el-form-item label="员工头像" prop="staffPhoto">
-        <UploadImage :value="ruleForm.staffPhoto" />
+        <UploadImage v-model="ruleForm.staffPhoto" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitForm">{{
