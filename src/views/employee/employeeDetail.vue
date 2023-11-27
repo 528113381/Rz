@@ -1,7 +1,7 @@
 <template>
   <div class="detail-wrap">
     <el-form
-      ref="ruleForm"
+      ref="ruleFormRef"
       :model="ruleForm"
       :rules="rules"
       label-width="200px"
@@ -24,8 +24,8 @@
           v-model="ruleForm.formOfEmployment"
           placeholder="请选择活动区域"
         >
-          <el-option label="区域一" value="shanghai" />
-          <el-option label="区域二" value="beijing" />
+          <el-option label="正式" value="1" />
+          <el-option label="非正式" value="2" />
         </el-select>
       </el-form-item>
       <el-form-item label="入职时间" prop="timeOfEntry">
@@ -34,6 +34,8 @@
           type="date"
           placeholder="选择日期"
           style="width: 100%"
+          format="yyyy年MM月dd日"
+          value-format="yyyy-MM-dd"
         />
       </el-form-item>
       <el-form-item label="转正时间" prop="correctionTime">
@@ -42,6 +44,8 @@
           type="date"
           placeholder="选择日期"
           style="width: 100%"
+          format="yyyy年MM月dd日"
+          value-format="yyyy-MM-dd"
         />
       </el-form-item>
       <el-form-item label="员工头像" prop="staffPhoto">
@@ -62,6 +66,7 @@
   </div>
 </template>
 <script>
+import { addEmployeeRequest } from '@/api/employee'
 import SelectDepartment from './components/select-department.vue'
 export default {
   components: { SelectDepartment },
@@ -69,6 +74,14 @@ export default {
     const validator = (rules, value, callback) => {
       if (value === 0) {
         callback(new Error('请选择部门'))
+        return
+      }
+      callback()
+    }
+    const validatorCorrectionTime = (rules, value, callback) => {
+      // 获取时间戳的三种方式 +new Date() Date.now() new Date().getTime()
+      if (new Date(this.ruleForm.timeOfEntry).getTime() > +new Date(value)) {
+        callback(new Error('转正时间必须大于入职时间'))
         return
       }
       callback()
@@ -98,7 +111,17 @@ export default {
           }
         ],
         departmentId: [
-          { validator, trigger: 'change' }
+          { validator, trigger: 'change', required: true }
+        ],
+        formOfEmployment: [
+          { required: true, message: '聘用形式必填', trigger: 'change' }
+        ],
+        correctionTime: [
+          { required: true, message: '入职时间必填', trigger: 'change' },
+          { validator: validatorCorrectionTime, trigger: 'change' }
+        ],
+        timeOfEntry: [
+          { required: true, message: '转正时间必填', trigger: 'change' }
         ]
       }
     }
@@ -108,7 +131,14 @@ export default {
   },
 
   methods: {
-    submitForm() {}
+    submitForm() {
+      this.$refs.ruleFormRef.validate(async(value) => {
+        if (value) {
+          await addEmployeeRequest(this.ruleForm)
+          this.$router.back()
+        }
+      })
+    }
   }
 }
 </script>

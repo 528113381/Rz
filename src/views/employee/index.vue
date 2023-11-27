@@ -116,10 +116,6 @@
   </div>
 </template>
 
-528113381-1310876796
-ap-nanjing
-AKIDEH4cqsd5IEuJRIsBDySfcIiqhOoxpRmq
-oMddLmwqTpvmOjna6LIzPHvKSJtwoQnu
 <script>
 import { departmentRequest } from '@/api/department'
 import { transformListTree } from '@/utils'
