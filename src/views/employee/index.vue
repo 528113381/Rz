@@ -97,7 +97,7 @@
         >
           <template slot-scope="{ row }">
             <el-button type="text" @click="viewDetail(row.id)">查看</el-button>
-            <el-button type="text">角色</el-button>
+            <el-button type="text" @click="assignRole(row.id)">角色</el-button>
             <el-button type="text" @click="deleteEmployee(row.id)">删除</el-button>
           </template>
         </el-table-column>
@@ -112,7 +112,9 @@
         @current-change="handleCurrentChange"
       />
     </div>
-    <ImprotExcel v-model="visible" @IMPOPT_SUCCESS="getUserList" />
+    <ImprotExcel v-model="visible" @IMPORT_SUCCESS="getUserList" />
+    <!-- 分配角色弹出框 -->
+    <AssignRole v-if="value" :id="id" v-model="value" />
   </div>
 </template>
 
@@ -123,10 +125,12 @@ import { exportExcelRequest, getUserListRequest, deleteEmployeeRequest } from '@
 import FaveSaver from 'file-saver'
 import lodash from 'lodash'
 import ImprotExcel from './components/import-excel.vue'
+import AssignRole from './components/AssignRole.vue'
 export default {
   name: 'Employee',
   components: {
-    ImprotExcel
+    ImprotExcel,
+    AssignRole
   },
   data() {
     return {
@@ -144,7 +148,9 @@ export default {
       },
       employeeList: [],
       total: 0,
-      visible: false
+      visible: false,
+      value: false,
+      id: 0
 
     }
   },
@@ -221,6 +227,10 @@ export default {
     },
     addEmployee() {
       this.$router.push(`/employee/detail`)
+    },
+    assignRole(id) {
+      this.value = true
+      this.id = id
     }
 
   }

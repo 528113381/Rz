@@ -4,7 +4,7 @@
       <el-button
         type="primary"
         size="small"
-        @click="addPermission(1,'0')"
+        @click="addPermission(1,0,'add')"
       >添加权限</el-button>
     </div>
     <el-table
@@ -35,18 +35,27 @@
         label="操作"
       >
         <template v-slot="{row}">
-          <el-button type="text" @click="addPermission(2,row.id)">添加</el-button>
-          <el-button type="text">编辑</el-button>
-          <el-button type="text">删除</el-button>
+          <el-button type="text" @click="addPermission(2,row.id,'add')">添加</el-button>
+          <el-button type="text" @click="addPermission(2,row.id,'edit')">编辑</el-button>
+          <el-button type="text" @click="deletePermission(row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-    <PermissionCom ref="permissionRef" :type="type" :pid="pid" :list="list" @ADD_SUCCESS="getPermissionList" />
+    <PermissionCom
+      v-if="value"
+      ref="permissionRef"
+      v-model="value"
+      :type="type"
+      :pid="pid"
+      :list="list"
+      :is-add-or-edit="isAddOrEdit"
+      @ADD_SUCCESS="getPermissionList"
+    />
   </div>
 </template>
 
 <script>
-import { getPermissionListRequest } from '@/api/permission'
+import { deletePermissionRequest, getPermissionListRequest } from '@/api/permission'
 import { transformListTree } from '@/utils/index'
 import PermissionCom from './components/PermissionCom.vue'
 
@@ -57,7 +66,9 @@ export default {
       permissionList: [],
       type: 0,
       pid: 0,
-      list: []
+      list: [],
+      isAddOrEdit: 'add',
+      value: false
     }
   },
   created() {
@@ -70,15 +81,31 @@ export default {
       this.list = res.data
       this.permissionList = transformListTree(res.data, 0)
     },
-    addPermission(type, pid) {
-      // 这种打开弹出框的方式，是通过ref调用子组件自己的方法
-      console.log(this.$refs.permissionRef)
-      this.$refs.permissionRef.openDialog()
+    addPermission(type, pid, isAddOrEdit) {
       this.pid = pid
       this.type = type
+      this.isAddOrEdit = isAddOrEdit
+      this.value = true
+    },
+    deletePermission(id) {
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        await deletePermissionRequest(id)
+        this.getPermissionList()
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+      }).catch(() => {
+
+      })
     }
   }
 }
+
 </script>
 
 <style lang="scss" scoped>

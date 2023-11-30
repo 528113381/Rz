@@ -90,7 +90,7 @@ export default {
         formOfEmployment: '',
         timeOfEntry: '',
         correctionTime: '',
-        staffPhoto: ''
+        staffPhoto: '6'
       },
       rules: {
         username: [

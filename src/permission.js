@@ -1,4 +1,4 @@
-import router from './router'
+import router, { asyncRoutes } from './router'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 import getPageTitle from '@/utils/get-page-title'
@@ -26,8 +26,20 @@ router.beforeEach(async(to, from, next) => {
       if (!store.getters.userId) {
         const res = await profileRequest()
         store.commit('user/setUserInfoMutation', res.data)
+        console.log(res.data.roles.menus, asyncRoutes)
+        const filterRoutes = asyncRoutes.filter(item => {
+          return res.data.roles.menus.includes(item.name)
+        })
+        store.commit('user/setRoutes', filterRoutes)
+        router.addRoutes([
+          ...filterRoutes,
+          { path: '*', redirect: '/404', hidden: true }
+        ])
+        // 下面这个next写上to.path,需要手动告诉路径
+        next(to.path)
+      } else {
+        next()
       }
-      next()
     }
     return
   }

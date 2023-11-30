@@ -64,3 +64,18 @@ export function updateEmployeeDetailRequest(data) {
     data
   })
 }
+// 获取已启用的角色列表
+export function getRoleListEnabledRequest() {
+  return request({
+    url: '/sys/role/list/enabled'
+  })
+}
+
+// 给员工分配角色
+export function assignRolesRequest(data) {
+  return request({
+    url: '/sys/user/assignRoles',
+    method: 'PUT',
+    data
+  })
+}

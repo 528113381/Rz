@@ -38,8 +38,11 @@ export const constantRoutes = [
         meta: { title: '首页', icon: 'dashboard' }
       }
     ]
-  },
+  }
+]
 
+// 动态路由 需要权限才能访问的路由
+export const asyncRoutes = [
   department,
   role,
   employee,
@@ -47,9 +50,7 @@ export const constantRoutes = [
   attendance,
   approval,
   salary,
-  social,
-
-  { path: '*', redirect: '/404', hidden: true }
+  social
 ]
 
 const createRouter = () => new Router({

@@ -1,10 +1,8 @@
 <template>
   <div class="role-wrap">
-    <!-- 添加按钮 -->
     <div class="add-btn">
       <el-button type="primary" @click="addRole">添加角色</el-button>
     </div>
-    <!-- table表格 -->
     <el-table
       :data="tableData"
       style="width: 100%"
@@ -17,20 +15,16 @@
         <template v-slot="{row}">
           <el-input v-if="row.isEdit" v-model="editRow.name" />
           <div v-else>{{ row.name }}</div>
-
         </template>
       </el-table-column>
       <el-table-column
         label="启用"
         width="180"
       >
-        <!-- <div slot-scope="scope" @click="fn(scope)">
-          {{ scope.row.state === 1 ? '已启用' : '未启用' }}
-        </div> -->
-        <!-- <template v-slot="scope"> -->
         <template #default="scope">
           <div v-if="scope.row.isEdit">
-            {{ editRow.state === 1 ? '已启用' : '未启用' }}<el-switch v-model="editRow.state" :active-value="1" :inactive-value="0" style="margin-left: 20px; transform: translateY(-2px);" />
+            {{ editRow.state === 1 ? '已启用' : '未启用' }}
+            <el-switch v-model="editRow.state" :active-value="1" :inactive-value="0" style="margin-left: 20px; transform: translateY(-2px);" />
           </div>
           <div v-else>{{ scope.row.state === 1 ? '已启用' : '未启用' }}</div>
         </template>
@@ -47,28 +41,26 @@
       <el-table-column
         label="操作"
         width="200"
-      ><template v-slot="{ row }">
-        <div v-if="row.isEdit">
-          <el-button type="primary" size="mini" @click="updateRole(row)">确定</el-button>
-          <el-button size="mini" @click="row.isEdit = false">取消</el-button>
-        </div>
-        <div v-else>
-          <el-button type="text">分配权限</el-button>
-          <el-button type="text" style="margin-right: 5px" @click="editLine(row)">编辑</el-button>
-          <!-- <el-button type="text" @click="deleteRole(row.id)">删除</el-button> -->
-          <!-- 气泡弹出框组件 elmenet-ui官网 有变动，我们这个项目是 2.13.2的elemnt-ui， 看文档要注意版本 -->
-          <el-popconfirm
-            title="是否删除改角色"
-            @onConfirm="deleteRole(row.id)"
-            @onCancel="delCancel"
-          >
-            <el-button slot="reference" type="text">删除</el-button>
-          </el-popconfirm>
-        </div>
-      </template>
+      >
+        <template v-slot="{ row }">
+          <div v-if="row.isEdit">
+            <el-button type="primary" size="mini" @click="updateRole">确定</el-button>
+            <el-button size="mini" @click="row.isEdit = false">取消</el-button>
+          </div>
+          <div v-else>
+            <el-button type="text" @click="assignPermission(row.id)">分配权限</el-button>
+            <el-button type="text" style="margin-right: 5px" @click="editLine(row)">编辑</el-button>
+            <el-popconfirm
+              title="是否删除该角色"
+              @onConfirm="deleteRole(row.id)"
+              @onCancel="delCancel"
+            >
+              <el-button slot="reference" type="text">删除</el-button>
+            </el-popconfirm>
+          </div>
+        </template>
       </el-table-column>
     </el-table>
-    <!-- 分页插件 -->
     <div>
       <el-pagination
         v-if="show"
@@ -82,23 +74,31 @@
       />
     </div>
     <addDialog ref="addRef" @ADD_ROLE_SUCCESS="addToPage" />
+
+    <assignPermission v-if="value" :id="id" v-model="value" />
   </div>
 </template>
+
 <script>
 import { deleteRoleRequest, getRoleListRequest, updateRoleRequest } from '@/api/role'
 import addDialog from './components/addDialog.vue'
+import assignPermission from './components/AssignPermission.vue'
 import lodash from 'lodash'
+
 export default {
-  name: 'Role',
-  components: { addDialog },
+  name: 'Role', // 组件名
+  components: { addDialog, assignPermission }, // 引入的组件
   data() {
+    // 组件的数据
     return {
-      tableData: [],
-      total: 0,
-      page: 1,
-      pagesize: 5,
-      editRow: {},
-      show: true
+      tableData: [], // 表格数据
+      total: 0, // 数据总数
+      page: 1, // 当前页码
+      pagesize: 5, // 每页显示的条数
+      editRow: {}, // 正在编辑的行
+      id: 0, // 角色的ID
+      value: false, // 弹窗的显示状态
+      show: true // 控制显示的状态
     }
   },
   computed: {
@@ -110,14 +110,17 @@ export default {
     isFullPage() {
       return this.total % this.pagesize === 0
     },
+    // 数据总数是否只有一项
     onlyOneTotal() {
       return this.total % this.pagesize === 1
     }
   },
   created() {
+    // 组件创建时调用获取角色列表的方法
     this.getRoleList()
   },
   methods: {
+    // 获取角色列表
     async getRoleList() {
       const res = await getRoleListRequest({ page: this.page, pagesize: this.pagesize })
       this.editRow = this.$options.data().editRow
@@ -131,17 +134,25 @@ export default {
         this.show = true
       }, 0)
     },
+
+    // 每页显示条数变化时的回调
     handleSizeChange(value) {
       this.pagesize = value
       this.getRoleList()
     },
+
+    // 页码变化时的回调
     handleCurrentChange(value) {
       this.page = value
       this.getRoleList()
     },
+
+    // 添加角色
     addRole() {
       this.$refs.addRef.openDialog()
     },
+
+    // 添加角色成功后的回调
     addToPage() {
       if (this.isFullPage) {
         this.page = this.maxPage + 1
@@ -151,6 +162,8 @@ export default {
       // this.$nextTick  等dom加载完毕了以后，在执行数据的操作
       this.getRoleList()
     },
+
+    // 删除后翻页
     delToPage() {
       if (this.onlyOneTotal) {
         this.page = this.maxPage - 1
@@ -158,26 +171,39 @@ export default {
       // this.$nextTick  等dom加载完毕了以后，在执行数据的操作
       this.getRoleList()
     },
+
+    // 编辑行
     editLine(item) {
-      this.tableData.forEach((item) => { item.isEdit = false })
       item.isEdit = true
       this.editRow = lodash.cloneDeep(item)
     },
-    async updateRole(row) {
-      delete row.isEdit
-      await updateRoleRequest(row)
+
+    // 更新角色
+    async updateRole() {
+      delete this.editRow.isEdit
+      await updateRoleRequest(this.editRow)
+      // 更新完毕以后，刷新页面，将数据重置
       this.getRoleList()
     },
+
+    // 删除角色
     async deleteRole(id) {
       await deleteRoleRequest(id)
       this.delToPage()
     },
-    delCancel() {}
-  }
 
+    // 删除取消
+    delCancel() {},
+
+    // 给角色分配权限
+    assignPermission(id) {
+      this.id = id
+      this.value = true
+    }
+  }
 }
 </script>
 
 <style scoped>
-
+  /* 样式相关的定义 */
 </style>

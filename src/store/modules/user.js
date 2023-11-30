@@ -1,10 +1,12 @@
 import { loginRequest } from '@/api/user'
-import { getToken, setToken } from '@/utils/auth'
+import { constantRoutes, resetRouter } from '@/router'
+import { getToken, removeToken, setToken } from '@/utils/auth'
 export default {
   namespaced: true, // 命名空间
   state: {
     token: getToken || '',
-    userInfo: {}
+    userInfo: {},
+    routes: constantRoutes
   },
   mutations: {
     loginMutation(state, payload) {
@@ -17,7 +19,12 @@ export default {
     delTokenMutation(state) {
       state.token = ''
       state.userInfo = {}
-      setToken('')
+      // setToken('')
+      removeToken()
+      resetRouter()
+    },
+    setRoutes(state, payload) {
+      state.routes = [...constantRoutes, ...payload]
     }
   },
   actions: {

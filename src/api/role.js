@@ -32,3 +32,19 @@ export function deleteRoleRequest(id) {
     method: 'DELETE'
   })
 }
+// 角色分配权限请求
+export function assignPremRequest(data) {
+  return request({
+    url: '/sys/role/assignPrem',
+    method: 'PUT',
+    data
+  })
+}
+// 获取角色详情请求
+export function getRoleDetailRequest(id) {
+  return request({
+    url: `/sys/role/${id}`,
+    method: 'GET'
+  })
+}
+
