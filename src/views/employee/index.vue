@@ -27,9 +27,9 @@
           <el-button size="small"> 群发通知</el-button>
         </div>
         <div class="btn-right">
-          <el-button type="primary " size="small" @click="addEmployee">添加员工</el-button>
-          <el-button size="small" @click="importExcelBtn"> excel导入</el-button>
-          <el-button size="small" @click="exportExcel"> excel导出</el-button>
+          <el-button v-permission="'addRole'" type="primary " size="small" @click="addEmployee">添加员工</el-button>
+          <el-button v-permission="'import'" size="small" @click="importExcelBtn"> excel导入</el-button>
+          <el-button v-permission="'export'" size="small" @click="exportExcel"> excel导出</el-button>
         </div>
       </div>
       <el-table

@@ -37,6 +37,16 @@ Vue.use(ElementUI, { locale })
 
 Vue.config.productionTip = false
 
+Vue.directive('permission', {
+  inserted(el, binding) {
+    console.log(el, binding)
+    const arr = store.state.user.userInfo?.roles?.points || []
+    if (!arr.includes(binding.value)) {
+      el.remove()
+    }
+  }
+})
+
 new Vue({
   el: '#app',
   router,

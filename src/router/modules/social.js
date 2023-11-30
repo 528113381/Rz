@@ -1,15 +1,15 @@
-import Layout from '@/layout'
-
+import layout from '@/layout'
 export default {
   path: '/social',
+  component: layout,
   name: 'social',
-  component: Layout,
-  children: [
-    {
-      path: '',
-      name: 'Social',
-      component: () => import('@/views/social/index'),
-      meta: { title: '社保', icon: 'dashboard' }
+  children: [{
+    path: '',
+    name: 'social',
+    component: () => import('@/views/social'),
+    meta: {
+      title: '社保',
+      icon: 'table'
     }
-  ]
+  }]
 }
